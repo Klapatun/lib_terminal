@@ -4,11 +4,19 @@
  *
  */
 
+/*Include*/
+/*............................................................................*/
 
 #include "terminal.h"
 
+/*____________________________________________________________________________*/
 
-void terminal_init(terminal_t *term) {
+/*Private value*/
+/*............................................................................*/
+static terminal_t* trm_local;
+/*____________________________________________________________________________*/
+
+void terminal_definition(terminal_t *term) {
 
   term->len_command = 0;
   term->len_data = 0;
@@ -19,17 +27,17 @@ void terminal_init(terminal_t *term) {
   term->state = TERMINAL_STATE_FREE;
 }
 
+void terminal_init(terminal_t* out_term) {
+  terminal_definition(out_term);
+  terminal_definition(trm_local);
+}
+
 void terminal_deinit(terminal_t *term) {
   free(term);
 }
 
 
 uint8_t terminal_check(terminal_t *term) {
-  terminal_t *trm_local = malloc(sizeof(term));
-  
-//  char a[sizeof(terminal_t)];
-  
-//  terminal_init(trm_local);
   
   if (trm_local->state == TERMINAL_STATE_BUSY) {
     
