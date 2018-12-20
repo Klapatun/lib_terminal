@@ -3,10 +3,15 @@
 
 /*Include*/
 /*,,,,,,,.....................................................................*/
-#include "terminal.h"
+#include "main.h"
+#include "terminal_user_opt.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+#if TERMINAL_USB
+#include "terminal_usb.h"
+#endif
 /*____________________________________________________________________________*/
 
 
@@ -41,6 +46,10 @@ typedef struct terminal_struct{
 /*............................................................................*/
 
 void terminal_init(terminal_t *term);
+
+void terminal_recive(terminal_t *term, char* Buf, uint16_t Len);
+
+uint8_t terminal_check(terminal_t *term);
 
 /*____________________________________________________________________________*/
 
