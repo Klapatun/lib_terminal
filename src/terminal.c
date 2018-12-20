@@ -27,7 +27,7 @@ uint8_t terminal_check(terminal_t *term) {
 //      ip_addr_trm(term);
     }
     else {
-//      CDC_Transmit_FS((uint8_t*)"Error: bad command", 18);
+      terminal_transmit("Error: bad command", 18);
     }
     term->state = TERMINAL_STATE_FREE;
   }
