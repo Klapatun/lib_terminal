@@ -10,27 +10,43 @@
 
 void terminal_init(terminal_t *term) {
 
-  term->len_command=0;
-  term->len_data=0;
+  term->len_command = 0;
+  term->len_data = 0;
+  term->len_msg = 0;
   term->msg = (char*)malloc(TERMINAL_SIZE_MESSAGE);
   term->command = (char*)malloc(TERMINAL_SIZE_COMMAND);
   term->data = (char*)malloc(TERMINAL_SIZE_DATA);
   term->state = TERMINAL_STATE_FREE;
 }
 
+void terminal_deinit(terminal_t *term) {
+  free(term);
+}
+
+
 uint8_t terminal_check(terminal_t *term) {
-  char arr[32] = {0};
-  if (term->state == TERMINAL_STATE_BUSY) {
+  terminal_t *trm_local = malloc(sizeof(term));
+  
+//  char a[sizeof(terminal_t)];
+  
+//  terminal_init(trm_local);
+  
+  if (trm_local->state == TERMINAL_STATE_BUSY) {
     
-    strcpy(arr, term->command);
-    if (!(strcmp("ip_addr", term->command))) {
+    memcpy(trm_local, term, sizeof(term));
+    if (!(strcmp("ip_addr", trm_local->command))) {
 //      ip_addr_trm(term);
     }
-    else {
-      terminal_transmit("Error: bad command", 18);
+    else if (!(strcmp("echo", trm_local->command))) {
+      terminal_transmit(trm_local->data, trm_local->len_data);
     }
-    term->state = TERMINAL_STATE_FREE;
+    else {
+      terminal_transmit("Error: bad command: ", 20);
+    }
+    trm_local->state = TERMINAL_STATE_FREE;
   }
+  
+  terminal_deinit(trm_local);
   
   return 0;
 }
@@ -51,6 +67,8 @@ void terminal_recive(terminal_t *term, char* Buf, uint16_t Len) {
     strncpy(term->data, &term->msg[separator], idx-separator);
     term->data[idx-separator] = '\0';
     term->len_data = idx-separator;
+    term->msg[idx] = '\0';
+    term->len_msg = idx;
     separator = idx = 0;
     term->state = TERMINAL_STATE_BUSY;
   }

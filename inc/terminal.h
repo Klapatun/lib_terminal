@@ -35,10 +35,11 @@
 typedef struct terminal_struct{
   uint8_t state;
   char* msg;
-  uint8_t len_command;
-  uint8_t len_data;
+  uint8_t len_msg;
   char* command;
+  uint8_t len_command;
   char* data;
+  uint8_t len_data;
 }terminal_t ;
 
 /*____________________________________________________________________________*/
