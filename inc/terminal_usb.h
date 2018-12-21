@@ -7,7 +7,7 @@
 /*Macros*/
 /*............................................................................*/
 
-#define terminal_transmit(pBuf, len)    CDC_Transmit_FS((uint8_t*)(pBuf), (uint16_t)(len))
+#define t_transmit(pBuf, len)    CDC_Transmit_FS((uint8_t*)(pBuf), (uint16_t)(len))
 
 /*____________________________________________________________________________*/
 

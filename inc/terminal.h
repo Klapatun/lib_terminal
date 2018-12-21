@@ -32,17 +32,11 @@
 /*Macros*/
 /*............................................................................*/
 
-#define terminal_interrupt_off()          __disable_irq (); 
-#define terminal_interrupt_on()           __enable_irq (); 
+#define t_interrupt_off()          __disable_irq (); 
+#define t_interrupt_on()           __enable_irq (); 
 
 /*____________________________________________________________________________*/
 
-/*Variables*/
-/*............................................................................*/
-
-
-
-/*____________________________________________________________________________*/
 
 /*Struct*/
 /*............................................................................*/
@@ -63,11 +57,11 @@ typedef struct terminal_struct{
 /*function declaration*/
 /*............................................................................*/
 
-void terminal_init(terminal_t *term);
+void t_init(terminal_t *term);
 
-void terminal_recive(terminal_t *term, char* Buf, uint16_t Len);
+void t_recive(terminal_t *term, char* Buf, uint16_t Len);
 
-uint8_t terminal_check(terminal_t *term);
+uint8_t t_check(terminal_t *term);
 
 /*____________________________________________________________________________*/
 
