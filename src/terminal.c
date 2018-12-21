@@ -8,26 +8,16 @@
 /*............................................................................*/
 
 #include "terminal.h"
+   
+#include "t/terminal_t.h"
 
 /*____________________________________________________________________________*/
 
-   
-/*Define*/
-/*............................................................................*/
-
-#define NumNameFunc     2
-   
-/*____________________________________________________________________________*/
    
 /*Private value*/
 /*............................................................................*/
 
 static terminal_t* trm_local;
-
-static char* pNameFunc[NumNameFunc] = {
-  "help \n",
-  "echo \n"
-};
 
 /*____________________________________________________________________________*/
 
@@ -51,13 +41,11 @@ uint8_t t_check(terminal_t *term) {
   
   if (term->state == TERMINAL_STATE_BUSY) {
     
-    t_interrupt_off();
-    
+    t_interrupt_off();    
     trm_local->len_command = term->len_command;
     trm_local->len_data = term->len_data;
     memcpy(trm_local->data, term->data, sizeof(term->data));
-    memcpy(trm_local->command, term->command, sizeof(term->command));
-    
+    memcpy(trm_local->command, term->command, sizeof(term->command));    
     t_interrupt_on();
         
     if (!(strcmp("t", trm_local->command))) {
@@ -100,8 +88,6 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
   }
   else {
     strncpy(&term->msg[idx], (char*)Buf, Len);
-//    term->msg[idx] = Buf[0];
-//    idx += 1; 
     idx += Len;
     if (idx >= TERMINAL_SIZE_MESSAGE) {
       term->state = TERMINAL_STATE_OVERFLOW;
@@ -110,13 +96,6 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
   
 }
 
-void t_help(void) {
-  
-  for(int i=0; i < NumNameFunc; i++) {
-    t_transmit(pNameFunc[i], strlen(pNameFunc[i]));
-    HAL_Delay(100);
-  }
-}
 
 void t_definition(terminal_t *term) {
 
@@ -129,15 +108,5 @@ void t_definition(terminal_t *term) {
   term->state = TERMINAL_STATE_FREE;
 }
 
-
-void t_data_handler(terminal_t *term) {
-  
-  if (!(strcmp("help", term->data))) {
-    t_help();
-  }
-  else {
-    t_transmit(term->data, term->len_data);
-  }
-}
 
 /*****************************END OF FILE**************************************/

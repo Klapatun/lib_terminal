@@ -54,7 +54,7 @@ typedef struct terminal_struct{
 /*____________________________________________________________________________*/
 
 
-/*function declaration*/
+/*Function declaration*/
 /*............................................................................*/
 
 void t_init(terminal_t *term);
