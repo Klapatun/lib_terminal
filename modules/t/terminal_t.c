@@ -15,7 +15,7 @@
 /*Define*/
 /*............................................................................*/
 
-#define NumNameFunc     2
+#define TERMINAL_HELP_NUM_NAME  2
    
 /*____________________________________________________________________________*/
 
@@ -23,7 +23,7 @@
 /*Private value*/
 /*............................................................................*/
 
-static char* pNameFunc[NumNameFunc] = {
+static char* pNameFunc[TERMINAL_HELP_NUM_NAME] = {
   "t/help \n",
   "echo \n"
 };
@@ -48,7 +48,7 @@ void t_data_handler(terminal_t *term) {
 
 void t_help(void) {
   
-  for(int i=0; i < NumNameFunc; i++) {
+  for(int i=0; i < TERMINAL_HELP_NUM_NAME; i++) {
     t_transmit(pNameFunc[i], strlen(pNameFunc[i]));
     HAL_Delay(100);
   }
