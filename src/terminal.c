@@ -30,6 +30,7 @@ static char* pNameFunc[NumNameFunc] = {
 /*............................................................................*/
 void terminal_help(void);
 void terminal_definition(terminal_t *term);
+void terminal_data_handler(terminal_t *term);
 /*____________________________________________________________________________*/
 
 
@@ -53,8 +54,8 @@ uint8_t terminal_check(terminal_t *term) {
     
     terminal_interrupt_on();
         
-    if (!(strcmp("help", trm_local->command))) {
-      terminal_help();
+    if (!(strcmp("t", trm_local->command))) {
+      terminal_data_handler(trm_local);
     }
     else if (!(strcmp("echo", trm_local->command))) {
       terminal_transmit(trm_local->data, trm_local->len_data);
@@ -120,6 +121,17 @@ void terminal_definition(terminal_t *term) {
   term->command = (char*)malloc(TERMINAL_SIZE_COMMAND);
   term->data = (char*)malloc(TERMINAL_SIZE_DATA);
   term->state = TERMINAL_STATE_FREE;
+}
+
+
+void terminal_data_handler(terminal_t *term) {
+  
+  if (!(strcmp("help", term->data))) {
+    terminal_help();
+  }
+  else {
+    terminal_transmit(term->data, term->len_data);
+  }
 }
 
 /*****************************END OF FILE**************************************/
