@@ -11,31 +11,32 @@
 
 /*____________________________________________________________________________*/
 
+   
 /*Private value*/
 /*............................................................................*/
 
 static terminal_t* trm_local;
 
+#define NumNameFunc     2
+static char* pNameFunc[NumNameFunc] = {
+  "help \n",
+  "echo \n"
+};
+
 /*____________________________________________________________________________*/
 
-void terminal_definition(terminal_t *term) {
 
-  term->len_command = 0;
-  term->len_data = 0;
-  term->len_msg = 0;
-  term->msg = (char*)malloc(TERMINAL_SIZE_MESSAGE);
-  term->command = (char*)malloc(TERMINAL_SIZE_COMMAND);
-  term->data = (char*)malloc(TERMINAL_SIZE_DATA);
-  term->state = TERMINAL_STATE_FREE;
-}
+/*Private declaration*/
+/*............................................................................*/
+void terminal_help(void);
+void terminal_definition(terminal_t *term);
+/*____________________________________________________________________________*/
+
 
 void terminal_init(terminal_t* out_term) {
+  
   terminal_definition(out_term);
   terminal_definition(trm_local);
-}
-
-void terminal_deinit(terminal_t *term) {
-  free(term);
 }
 
 
@@ -52,8 +53,8 @@ uint8_t terminal_check(terminal_t *term) {
     
     terminal_interrupt_on();
         
-    if (!(strcmp("ip_addr", trm_local->command))) {
-//      ip_addr_trm(term);
+    if (!(strcmp("help", trm_local->command))) {
+      terminal_help();
     }
     else if (!(strcmp("echo", trm_local->command))) {
       terminal_transmit(trm_local->data, trm_local->len_data);
@@ -65,7 +66,6 @@ uint8_t terminal_check(terminal_t *term) {
     trm_local->state = TERMINAL_STATE_FREE;
   }
   
-  terminal_deinit(trm_local);
   
   return 0;
 }
@@ -101,6 +101,25 @@ void terminal_recive(terminal_t *term, char* Buf, uint16_t Len) {
     }
   }
   
+}
+
+void terminal_help(void) {
+  
+  for(int i=0; i < NumNameFunc; i++) {
+    terminal_transmit(pNameFunc[i], strlen(pNameFunc[i]));
+    HAL_Delay(100);
+  }
+}
+
+void terminal_definition(terminal_t *term) {
+
+  term->len_command = 0;
+  term->len_data = 0;
+  term->len_msg = 0;
+  term->msg = (char*)malloc(TERMINAL_SIZE_MESSAGE);
+  term->command = (char*)malloc(TERMINAL_SIZE_COMMAND);
+  term->data = (char*)malloc(TERMINAL_SIZE_DATA);
+  term->state = TERMINAL_STATE_FREE;
 }
 
 /*****************************END OF FILE**************************************/
