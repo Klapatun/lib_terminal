@@ -47,11 +47,11 @@ uint8_t terminal_check(terminal_t *term) {
     
     trm_local->len_command = term->len_command;
     trm_local->len_data = term->len_data;
-    memcpy(trm_local->data, term->data, sizeof(term->len_data));
-    memcpy(trm_local->command, term->command, sizeof(term->len_command));
+    memcpy(trm_local->data, term->data, sizeof(term->data));
+    memcpy(trm_local->command, term->command, sizeof(term->command));
     
     terminal_interrupt_on();
-    
+        
     if (!(strcmp("ip_addr", trm_local->command))) {
 //      ip_addr_trm(term);
     }
@@ -61,6 +61,7 @@ uint8_t terminal_check(terminal_t *term) {
     else {
       terminal_transmit("Error: bad command: ", 20);
     }
+    
     trm_local->state = TERMINAL_STATE_FREE;
   }
   
