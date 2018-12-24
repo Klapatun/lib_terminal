@@ -61,11 +61,6 @@ void t_help(struct help_struct* h) {
     if (j==0)
       n = *h->next;
   }
-  
-//  for(int i=0; i < TERMINAL_HELP_NUM_NAME; i++) {
-//    t_transmit(pNameFunc[i], strlen(pNameFunc[i]));
-//    HAL_Delay(100);
-//  }
 }
 
 /*****************************END OF FILE**************************************/

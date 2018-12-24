@@ -49,7 +49,6 @@
 typedef struct terminal_struct{
   
   struct terminal_struct* next;
-  struct help_struct* pHelp;
     
   uint8_t state;
   char* msg;
