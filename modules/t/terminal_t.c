@@ -53,13 +53,20 @@ void t_help(struct help_struct* h) {
   
   struct help_struct n = *h;
   
-  for (int j=0; j < 2; j++) {
+  while(1) {
+    
     for (int i=0; i < n.num_arr; i++) {
       t_transmit(n.names_func_module[i], strlen(n.names_func_module[i]));
       HAL_Delay(100);
     }
-    if (j==0)
+    
+    if(n.next != NULL) {
       n = *h->next;
+    }
+    else {
+      break;
+    }
+      
   }
 }
 

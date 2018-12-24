@@ -49,6 +49,7 @@ void t_include_help_struct(struct help_struct* pParent, char** pArrNameChilde, i
   pParent->next = t_add_help_struct();
   pParent->next->head = pParent->head;
   pParent->next->num_arr = numArr;
+  pParent->next->next = NULL;
   
   pParent->next->names_func_module = pArrNameChilde;
 }
@@ -59,6 +60,7 @@ void t_build_help(struct help_struct* h) {
   h->head = h;
   h->names_func_module = pHelpBase;
   h->num_arr = 1;
+  h->next = NULL;
 
   t_include_help_struct(h, pArrT, 2);
   
