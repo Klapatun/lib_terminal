@@ -34,16 +34,10 @@ void t_data_handler(terminal_t *term);
 
 void t_init(terminal_t* out_term) {
   
-//  struct help_struct* h;
-  
   t_definition(out_term);
   t_definition(trm_local);
   
-//  out_term->pHelp = help;
-  
   t_build_help(&help);
-  
-//  out_term->pHelp = help;
   
 #if TERMINAL_INCLUDE_HELP
   t_include_module(out_term, pArrHelp);
@@ -52,7 +46,6 @@ void t_init(terminal_t* out_term) {
 #if TERMINAL_INCLUDE_T
   t_include_module(out_term, pArrT);
 #endif
-//  while(1);
 }
 
 
@@ -65,7 +58,6 @@ uint8_t t_check(terminal_t *term) {
     trm_local->len_data = term->len_data;
     memcpy(trm_local->data, term->data, sizeof(term->data));
     memcpy(trm_local->command, term->command, sizeof(term->command)); 
-//    trm_local->pHelp = help;
     t_interrupt_on();
         
     if (!(strcmp("t", trm_local->command))) {
@@ -126,7 +118,6 @@ void t_definition(terminal_t *term) {
   term->command = (char*)malloc(TERMINAL_SIZE_COMMAND);
   term->data = (char*)malloc(TERMINAL_SIZE_DATA);
   term->state = TERMINAL_STATE_FREE;
-//  term->pHelp = NULL;
 }
 
 
