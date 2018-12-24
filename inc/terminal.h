@@ -14,6 +14,8 @@
 #include "terminal_usb.h"
 #endif
 
+#include "help/terminal_help.h"
+
 /*____________________________________________________________________________*/
 
 
@@ -26,6 +28,9 @@
 #define TERMINAL_STATE_BUSY          0
 #define TERMINAL_STATE_FREE          1
 #define TERMINAL_STATE_OVERFLOW      2
+
+#define TERMINAL_INCLUDE_HELP        0
+#define TERMINAL_INCLUDE_T           0
 /*____________________________________________________________________________*/
 
 
@@ -42,6 +47,10 @@
 /*............................................................................*/
 
 typedef struct terminal_struct{
+  
+  struct terminal_struct* next;
+  struct help_struct* pHelp;
+    
   uint8_t state;
   char* msg;
   uint8_t len_msg;

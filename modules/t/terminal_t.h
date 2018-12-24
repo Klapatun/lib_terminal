@@ -20,10 +20,7 @@ struct help_struct {
   char** names_func_module;
 };*/
 
-char* pNameFunc[TERMINAL_HELP_NUM_NAME] = {
-  "t/help \n",
-  "echo \n"
-};
+
 
 /*____________________________________________________________________________*/
 
