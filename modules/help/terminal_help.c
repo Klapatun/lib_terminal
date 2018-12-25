@@ -145,7 +145,8 @@ void t_help_handler(terminal_t *term) {
   
   
   if (term->len_data == 0) {
-    t_help(&tmpHelp, TERMINAL_HELP_MODULES_ALL);
+//    t_help(&tmpHelp, TERMINAL_HELP_MODULES_ALL);
+    t_transmit("Invalid argument \n", 18);
   }
   else {
     if (t_search_module(term->data, term->len_data, &tmpHelp)) {
