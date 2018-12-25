@@ -94,12 +94,12 @@ void t_build_help(struct help_struct* h) {
 /**/
 /******************************************************************************/
 
-void t_recurs(struct help_struct* h) {
+void t_out_name_list(struct help_struct* h) {
   
   t_transmit(strcat(h->name," \n"), strlen(h->name)+1);
   
   if(h->next != NULL) {
-    t_recurs(h->next);
+    t_out_name_list(h->next);
   }
 }
 
@@ -113,7 +113,7 @@ void t_help(struct help_struct* h, uint8_t nModule) {
     
     if (nModule == TERMINAL_HELP_NAMES_MODULES) {
       
-      t_recurs(h);
+      t_out_name_list(h);
       
       break;
     }
