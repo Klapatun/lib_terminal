@@ -29,6 +29,12 @@ char* pArrT[2] = {
   "echo \n"
 };
 
+char* pArrTr[3] = {
+  "t/help \n",
+  "echo \n",
+  "men \n"
+};
+
 extern struct help_struct help;
 
 /*____________________________________________________________________________*/
@@ -46,27 +52,6 @@ void t_data_handler(terminal_t *term) {
   }
   else {
     t_transmit(term->data, term->len_data);
-  }
-}
-
-void t_help(struct help_struct* h) {
-  
-  struct help_struct n = *h;
-  
-  while(1) {
-    
-    for (int i=0; i < n.num_arr; i++) {
-      t_transmit(n.names_func_module[i], strlen(n.names_func_module[i]));
-      HAL_Delay(100);
-    }
-    
-    if(n.next != NULL) {
-      n = *h->next;
-    }
-    else {
-      break;
-    }
-      
   }
 }
 

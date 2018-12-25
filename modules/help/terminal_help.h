@@ -16,7 +16,7 @@ struct help_struct {
   struct help_struct* next;
   
   char** names_func_module;
-  int num_arr;
+  uint8_t num_arr;
 };
 
 /*____________________________________________________________________________*/
@@ -25,6 +25,7 @@ struct help_struct {
 /*............................................................................*/
 
 void t_build_help(struct help_struct* h);
+void t_help(struct help_struct* h);
 
 /*____________________________________________________________________________*/
 
