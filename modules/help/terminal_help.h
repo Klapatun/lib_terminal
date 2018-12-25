@@ -12,8 +12,9 @@
 /*Define*/
 /*............................................................................*/
 
-#define TERMINAL_HELP_MODULES_ALL       1
 #define TERMINAL_HELP_ONE_MODULE        0
+#define TERMINAL_HELP_MODULES_ALL       1
+#define TERMINAL_HELP_NAMES_MODULES     2
 
 /*____________________________________________________________________________*/
 

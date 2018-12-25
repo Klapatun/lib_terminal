@@ -94,6 +94,15 @@ void t_build_help(struct help_struct* h) {
 /**/
 /******************************************************************************/
 
+void t_recurs(struct help_struct* h) {
+  
+  t_transmit(strcat(h->name,"  "), strlen(h->name)+2);
+  
+  if(h->next != NULL) {
+    t_recurs(h->next);
+  }
+}
+
 void t_help(struct help_struct* h, uint8_t nModule) {
   
   struct help_struct n = *h;
@@ -101,6 +110,13 @@ void t_help(struct help_struct* h, uint8_t nModule) {
   t_transmit("/**********/ \n", 14);
   
   while(1) {
+    
+    if (nModule == TERMINAL_HELP_NAMES_MODULES) {
+      
+      t_recurs(h);
+      
+      break;
+    }
     
     for (int i=0; i < n.num_arr; i++) {
       t_transmit(n.names_func_module[i], strlen(n.names_func_module[i]));
@@ -145,10 +161,13 @@ void t_help_handler(terminal_t *term) {
   
   
   if (term->len_data == 0) {
-//    t_help(&tmpHelp, TERMINAL_HELP_MODULES_ALL);
     t_transmit("Invalid argument \n", 18);
   }
   else {
+    if (!(strcmp("modules", term->data))) {
+      t_help(&tmpHelp, TERMINAL_HELP_NAMES_MODULES);
+    }
+    
     if (t_search_module(term->data, term->len_data, &tmpHelp)) {
       t_help(tmpHelp.next, TERMINAL_HELP_ONE_MODULE);
     }
