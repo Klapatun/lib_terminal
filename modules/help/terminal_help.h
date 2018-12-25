@@ -15,6 +15,8 @@ struct help_struct {
   struct help_struct* head;
   struct help_struct* next;
   
+  char* name;
+  
   char** names_func_module;
   uint8_t num_arr;
 };

@@ -39,13 +39,6 @@ void t_init(terminal_t* out_term) {
   
   t_build_help(&help);
   
-#if TERMINAL_INCLUDE_HELP
-  t_include_module(out_term, pArrHelp);
-#endif
-  
-#if TERMINAL_INCLUDE_T
-  t_include_module(out_term, pArrT);
-#endif
 }
 
 
@@ -62,6 +55,8 @@ uint8_t t_check(terminal_t *term) {
         
     if (!(strcmp("t", trm_local->command))) {
       t_data_handler(term);
+    }
+    else if (!(strcmp("help", trm_local->command))) {
     }
     else if (!(strcmp("echo", trm_local->command))) {
       t_transmit(trm_local->data, trm_local->len_data);

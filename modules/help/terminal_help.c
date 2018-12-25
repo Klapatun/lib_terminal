@@ -21,7 +21,7 @@
 /*............................................................................*/
 
 char* pHelpBase[1] = {
-    "Module \"Help\" version 0.1 \n"
+    "Module \"Help\" version 0.2 \n"
 };
 
 /*____________________________________________________________________________*/
@@ -39,7 +39,6 @@ struct help_struct help;
 /*............................................................................*/
 
 extern char* pArrT[2];
-extern char* pArrTr[3];
 
 /*____________________________________________________________________________*/
 
@@ -66,22 +65,6 @@ void t_include_help_struct(struct help_struct* pParent, char** pArr, uint8_t num
   else {
     t_include_help_struct(pParent->next, pArr, numArr);
   }
-  
-}
-
-
-void t_build_help(struct help_struct* h) {
-  
-  h->head = h;
-  h->names_func_module = pHelpBase;
-  h->num_arr = 1;
-  h->next = NULL;
-  
-#if TERMINAL_INCLUDE_T
-  t_include_help_struct(h, pArrT, 2);
-  
-  t_include_help_struct(h, pArrTr, 3);
-#endif
 }
 
 void t_help(struct help_struct* h) {
@@ -103,6 +86,19 @@ void t_help(struct help_struct* h) {
     }
       
   }
+}
+
+void t_build_help(struct help_struct* h) {
+  
+  h->head = h;
+  h->names_func_module = pHelpBase;
+  h->num_arr = 1;
+  h->next = NULL;
+  
+#if TERMINAL_INCLUDE_T
+  t_include_help_struct(h, pArrT, 2);
+#endif
+  
 }
 
 /*****************************END OF FILE**************************************/
