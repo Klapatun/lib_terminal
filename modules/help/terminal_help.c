@@ -87,7 +87,7 @@ void t_build_help(struct help_struct* h) {
 #if TERMINAL_INCLUDE_T
   t_include_help_struct(h, pArrT, 2, "t");
 #endif
-  t_include_help_struct(h, pHelpTwo, 3, "help2");
+  t_include_help_struct(h, pHelpTwo, 3, "dop");
 }
 
 /******************************************************************************/
@@ -96,7 +96,7 @@ void t_build_help(struct help_struct* h) {
 
 void t_recurs(struct help_struct* h) {
   
-  t_transmit(strcat(h->name,"  "), strlen(h->name)+2);
+  t_transmit(strcat(h->name," \n"), strlen(h->name)+1);
   
   if(h->next != NULL) {
     t_recurs(h->next);
@@ -166,6 +166,7 @@ void t_help_handler(terminal_t *term) {
   else {
     if (!(strcmp("modules", term->data))) {
       t_help(&tmpHelp, TERMINAL_HELP_NAMES_MODULES);
+      return;
     }
     
     if (t_search_module(term->data, term->len_data, &tmpHelp)) {
