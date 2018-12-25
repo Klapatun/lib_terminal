@@ -24,6 +24,12 @@ char* pHelpBase[1] = {
     "Module \"Help\" version 0.2 \n"
 };
 
+char* pHelpTwo[3] = {
+    "one \n",
+    "two \n",
+    "three \n"
+};
+
 /*____________________________________________________________________________*/
 
 
@@ -71,15 +77,17 @@ void t_include_help_struct(struct help_struct* pParent, char** pArr,
 
 void t_build_help(struct help_struct* h) {
   
+  h->name = "help";
   h->head = h;
   h->names_func_module = pHelpBase;
   h->num_arr = 1;
   h->next = NULL;
   
+  
 #if TERMINAL_INCLUDE_T
   t_include_help_struct(h, pArrT, 2, "t");
 #endif
-  
+  t_include_help_struct(h, pHelpTwo, 3, "help2");
 }
 
 /******************************************************************************/
@@ -141,7 +149,7 @@ void t_help_handler(terminal_t *term) {
   }
   else {
     if (t_search_module(term->data, term->len_data, &tmpHelp)) {
-      t_help(&tmpHelp, TERMINAL_HELP_ONE_MODULE);
+      t_help(tmpHelp.next, TERMINAL_HELP_ONE_MODULE);
     }
     else {
       t_transmit("Module is not connected \n",25);
