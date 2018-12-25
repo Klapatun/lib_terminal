@@ -1,9 +1,19 @@
 #ifndef TERMINAL_HELP_H_
 #define TERMINAL_HELP_H_
 
+/*Include*/
+/*............................................................................*/
+
+#include "terminal.h"
+
+/*____________________________________________________________________________*/
+
+
 /*Define*/
 /*............................................................................*/
 
+#define TERMINAL_HELP_MODULES_ALL       1
+#define TERMINAL_HELP_ONE_MODULE        0
 
 /*____________________________________________________________________________*/
 
@@ -27,7 +37,8 @@ struct help_struct {
 /*............................................................................*/
 
 void t_build_help(struct help_struct* h);
-void t_help(struct help_struct* h);
+//void t_help(struct help_struct* h);
+void t_help_handler(terminal_t* term);
 
 /*____________________________________________________________________________*/
 

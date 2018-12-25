@@ -57,6 +57,7 @@ uint8_t t_check(terminal_t *term) {
       t_data_handler(term);
     }
     else if (!(strcmp("help", trm_local->command))) {
+      t_help_handler(term);
     }
     else if (!(strcmp("echo", trm_local->command))) {
       t_transmit(trm_local->data, trm_local->len_data);

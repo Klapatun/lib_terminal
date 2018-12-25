@@ -14,7 +14,7 @@
 #include "terminal_usb.h"
 #endif
 
-#include "help/terminal_help.h"
+//#include "help/terminal_help.h"
 
 /*____________________________________________________________________________*/
 
