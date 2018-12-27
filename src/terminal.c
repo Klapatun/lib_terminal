@@ -20,6 +20,7 @@
 
 static terminal_t* trm_local;
 extern struct help_struct help;
+static uint32_t timTick;
 
 /*____________________________________________________________________________*/
 
@@ -44,7 +45,10 @@ void t_init(terminal_t* out_term) {
 
 uint8_t t_check(terminal_t *term) {
   
-  if (term->state == TERMINAL_STATE_BUSY) {
+  uint32_t tmpTim = HAL_GetTick();
+  
+  if ((term->state == TERMINAL_STATE_BUSY) || 
+      ((timTick+1000 <= tmpTim) && (term->state == TERMINAL_STATE_WAIT))) {
     
     t_interrupt_off();    
     trm_local->len_command = term->len_command;
@@ -68,6 +72,8 @@ uint8_t t_check(terminal_t *term) {
       t_transmit("Error: bad command: ", 20);
     }
     
+    timTick = 0;
+    
     trm_local->state = TERMINAL_STATE_FREE;
   }
   
@@ -78,6 +84,10 @@ uint8_t t_check(terminal_t *term) {
 void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
   
   static uint8_t idx=0, separator=0;
+  
+  if (timTick == 0) {
+    timTick = HAL_GetTick();
+  }
   
   if (strchr(Buf, ':')) {
     /*Command*/
@@ -115,6 +125,7 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
     term->state = TERMINAL_STATE_BUSY;
   }
   else {
+    term->state = TERMINAL_STATE_WAIT;
     strncpy(&term->msg[idx], (char*)Buf, Len);
     idx += Len;
     if (idx >= TERMINAL_SIZE_MESSAGE) {
