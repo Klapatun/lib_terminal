@@ -65,7 +65,7 @@ void t_include_help_struct(struct help_struct* pParent, char** pArr,
     pParent->next = t_add_help_struct();
     pParent->next->next = NULL;
     pParent->next->head = pParent->head;
-    pParent->name = name;
+    pParent->next->name = name;
     
     pParent->next->names_func_module = pArr;
     pParent->next->num_arr = numArr;
@@ -96,7 +96,12 @@ void t_build_help(struct help_struct* h) {
 
 void t_out_name_list(struct help_struct* h) {
   
-  t_transmit(strcat(h->name," \n"), strlen(h->name)+1);
+  if (h->name != NULL) {
+    t_transmit(strcat(h->name," \n"), strlen(h->name)+1);
+  }
+  else {
+    t_transmit("Module without name /n", 21);
+  }
   
   if(h->next != NULL) {
     t_out_name_list(h->next);
@@ -113,7 +118,7 @@ void t_help(struct help_struct* h, uint8_t nModule) {
     
     if (nModule == TERMINAL_HELP_NAMES_MODULES) {
       
-      t_out_name_list(h);
+      t_out_name_list(h->next);
       
       break;
     }
@@ -161,16 +166,19 @@ void t_help_handler(terminal_t *term) {
   
   
   if (term->len_data == 0) {
-    t_transmit("No argument \n", 18);
+    t_transmit("No argument \n", 13);
   }
   else {
     if (!(strcmp("modules", term->data))) {
       t_help(&tmpHelp, TERMINAL_HELP_NAMES_MODULES);
       return;
     }
+//    else if (!(strcmp("all", term->data))){
+//      t_help(&tmpHelp, TERMINAL_HELP_MODULES_ALL);
+//    }
     
     if (t_search_module(term->data, term->len_data, &tmpHelp)) {
-      t_help(tmpHelp.next, TERMINAL_HELP_ONE_MODULE);
+      t_help(&tmpHelp, TERMINAL_HELP_ONE_MODULE);
     }
     else {
       t_transmit("Module is not connected \n",25);
