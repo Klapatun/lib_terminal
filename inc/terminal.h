@@ -29,8 +29,6 @@
 #define TERMINAL_STATE_FREE          1
 #define TERMINAL_STATE_OVERFLOW      2
 #define TERMINAL_STATE_WAIT          3
-
-#define TERMINAL_INCLUDE_HELP        0
 /*____________________________________________________________________________*/
 
 
