@@ -102,6 +102,10 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
       separator++;
     }
     
+    if (separator == idx-1) {
+      separator++;
+    }
+    
     strncpy(term->data, &term->msg[separator], idx-separator);
     term->data[idx-separator] = '\0';
     term->len_data = idx-separator;
