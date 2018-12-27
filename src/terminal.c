@@ -53,15 +53,17 @@ uint8_t t_check(terminal_t *term) {
     memcpy(trm_local->command, term->command, sizeof(term->command)); 
     t_interrupt_on();
         
-    if (!(strcmp("t", trm_local->command))) {
-      t_data_handler(term);
-    }
-    else if (!(strcmp("help", trm_local->command))) {
+    if (!(strcmp("help", trm_local->command))) {
       t_help_handler(term);
     }
     else if (!(strcmp("echo", trm_local->command))) {
       t_transmit(trm_local->data, trm_local->len_data);
     }
+#if TERMINAL_INCLUDE_T
+    else if (!(strcmp("t", trm_local->command))) {
+      t_data_handler(term);
+    }
+#endif
     else {
       t_transmit("Error: bad command: ", 20);
     }

@@ -24,12 +24,6 @@ char* pHelpBase[1] = {
     "Module \"Help\" version 0.2 \n"
 };
 
-char* pHelpTwo[3] = {
-    "one \n",
-    "two \n",
-    "three \n"
-};
-
 /*____________________________________________________________________________*/
 
 
@@ -44,7 +38,9 @@ struct help_struct help;
 /*Private declaration*/
 /*............................................................................*/
 
+#if TERMINAL_INCLUDE_T
 extern char* pArrT[2];
+#endif
 
 /*____________________________________________________________________________*/
 
@@ -87,7 +83,6 @@ void t_build_help(struct help_struct* h) {
 #if TERMINAL_INCLUDE_T
   t_include_help_struct(h, pArrT, 2, "t");
 #endif
-  t_include_help_struct(h, pHelpTwo, 3, "dop");
 }
 
 /******************************************************************************/

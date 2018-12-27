@@ -30,7 +30,6 @@
 #define TERMINAL_STATE_OVERFLOW      2
 
 #define TERMINAL_INCLUDE_HELP        0
-//#define TERMINAL_INCLUDE_T           0
 /*____________________________________________________________________________*/
 
 
