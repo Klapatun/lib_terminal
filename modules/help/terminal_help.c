@@ -10,10 +10,6 @@
 #include "terminal.h"
 #include "help/terminal_help.h"
 
-#if TERMINAL_INCLUDE_T
-#include "t/terminal_t.h"
-#endif
-
 /*____________________________________________________________________________*/
 
 
