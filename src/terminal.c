@@ -81,6 +81,7 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
   
   if (strchr(Buf, ':')) {
     /*Command*/
+    term->state = TERMINAL_STATE_WAIT;
     strncpy(term->command, term->msg, idx);
     term->command[idx] = '\0';
     term->len_command = idx;
@@ -88,6 +89,15 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
   }
   else if (strchr(Buf, ';')) {
     /*Data*/
+    
+    if (separator == 0) {
+      strncpy(term->command, term->msg, idx);
+      term->command[idx] = '\0';
+      term->len_command = idx;
+      term->state = TERMINAL_STATE_BUSY;
+      return;
+    }
+    
     strncpy(term->data, &term->msg[separator], idx-separator);
     term->data[idx-separator] = '\0';
     term->len_data = idx-separator;
