@@ -142,18 +142,19 @@ void t_help(struct help_struct* h, uint8_t nModule) {
 uint8_t t_search_module(char* pNameModule, uint8_t numStr, struct help_struct* h) {
   
   uint8_t tmp = 0;
+  struct help_struct tmpHelp = *h;
   
-  if(!(strcmp(h->name, pNameModule))) {
+  if(!(strcmp(tmpHelp.name, pNameModule))) {
     tmp = 1;
   }
   else {
     
-    if (h->next == NULL) {
+    if (tmpHelp.next == NULL) {
       tmp=0;
     }
     else {
-      tmp = t_search_module(pNameModule, numStr, h->next);
-      *h = *h->next;
+      tmp = t_search_module(pNameModule, numStr, tmpHelp.next);
+      tmpHelp = *tmpHelp.next;
     }
   }
   
