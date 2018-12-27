@@ -161,7 +161,7 @@ void t_help_handler(terminal_t *term) {
   
   
   if (term->len_data == 0) {
-    t_transmit("Invalid argument \n", 18);
+    t_transmit("No argument \n", 18);
   }
   else {
     if (!(strcmp("modules", term->data))) {
