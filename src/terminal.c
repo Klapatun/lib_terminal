@@ -16,6 +16,10 @@
 #if TERMINAL_INCLUDE_HELP
 #include "help/terminal_help.h"
 #endif
+   
+#if TERMINAL_INCLUDE_LWIP
+#include "lwip/terminal_lwip.h"
+#endif
 
 /*____________________________________________________________________________*/
 
@@ -75,6 +79,11 @@ uint8_t t_check(terminal_t *term) {
 #if TERMINAL_INCLUDE_T
     else if (!(strcmp("t", trm_local->command))) {
       t_data_handler(term);
+    }
+#endif
+#if TERMINAL_INCLUDE_LWIP
+    else if (!(strcmp("lwip", trm_local->command))) {
+      t_lwip_handler(term);
     }
 #endif
     else {
