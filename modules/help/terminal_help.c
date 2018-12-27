@@ -162,7 +162,9 @@ uint8_t t_search_module(char* pNameModule, uint8_t numStr, struct help_struct* h
 
 void t_help_handler(terminal_t *term) {
   
-  struct help_struct tmpHelp = help;
+  struct help_struct tmpHelp;
+  
+  tmpHelp  = help;
   
   
   if (term->len_data == 0) {
@@ -173,9 +175,10 @@ void t_help_handler(terminal_t *term) {
       t_help(&tmpHelp, TERMINAL_HELP_NAMES_MODULES);
       return;
     }
-//    else if (!(strcmp("all", term->data))){
-//      t_help(&tmpHelp, TERMINAL_HELP_MODULES_ALL);
-//    }
+    else if (!(strcmp("all", term->data))){
+      t_help(&tmpHelp, TERMINAL_HELP_MODULES_ALL);
+      return;
+    }
     
     if (t_search_module(term->data, term->len_data, &tmpHelp)) {
       t_help(&tmpHelp, TERMINAL_HELP_ONE_MODULE);
