@@ -50,6 +50,9 @@ void t_init(terminal_t* out_term) {
 #if TERMINAL_INCLUDE_T
   t_build_help(&help);
 #endif
+#if TERMINAL_INCLUDE_LWIP
+  t_lwip_init();
+#endif
 }
 
 

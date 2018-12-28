@@ -9,8 +9,6 @@
 
 #include "terminal.h"
 #include "lwip/terminal_lwip.h"
-#include "lwip.h"
-#include "tcp.h"
 
 /*____________________________________________________________________________*/
 
@@ -175,5 +173,22 @@ void t_lwip_handler(terminal_t *term) {
   
 }
 
+/******************************************************************************/
+/**/
+/******************************************************************************/
+
+void t_tcp_init(struct tcp_struct* sTcp) {
+  
+  sTcp->port = 0;
+  sTcp->ip_dest.addr = 0;
+  sTcp->status = 0;
+  sTcp->interface = NULL;
+  sTcp->client_pcb = NULL;
+}
+
+void t_lwip_init(void) {
+  
+  t_tcp_init();
+}
 
 /*****************************END OF FILE**************************************/
