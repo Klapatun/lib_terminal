@@ -9,19 +9,105 @@
 
 #include "terminal.h"
 #include "lwip/terminal_lwip.h"
+#include "lwip.h"
+#include "tcp.h"
 
 /*____________________________________________________________________________*/
 
+
+/*Extern variables*/
+/*............................................................................*/
+
+extern struct netif gnetif;
+
+/*____________________________________________________________________________*/
+
+
+/*Private variables*/
+/*............................................................................*/
+
+//ip_addr_t t_ip_addr;
+struct tcp_pcb *client_pcb;
+
+/*____________________________________________________________________________*/
+
+size_t t_parser_ip(char* ip_str, size_t len, uint8_t* ipextp) {
+  
+  uint16_t port=0;
+  uint8_t offset = 0;
+  uint8_t i;
+  char ss2[5] = {0};
+  char *ss1;
+  int ch1 = '.';
+  int ch2 = ',';
+  for(i=0;i<3;i++)
+  {
+    ss1 = strchr(ip_str,ch1);
+    offset = ss1-ip_str+1;
+    strncpy(ss2,ip_str,offset);
+    ss2[offset]=0;
+    ipextp[i] = atoi(ss2);
+    ip_str+=offset;
+    len-=offset;
+  }
+  ss1=strchr(ip_str,ch2);
+  if (ss1!=NULL)
+  {
+    offset=ss1-ip_str+1;
+    strncpy(ss2,ip_str,offset);
+    ss2[offset]=0;
+    ipextp[3] = atoi(ss2);
+    
+    //about port
+    ip_str+=offset;
+    port = atoi(ip_str);
+    
+    return port;
+  }
+  
+  port = 80;
+  strncpy(ss2,ip_str,len);
+  ss2[len]=0;
+  ipextp[3] = atoi(ss2);
+  
+  return port;
+}
+
+static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
+{
+  return err;
+}
+
 void t_tcp_command(char* string, size_t flagCommand) {
   
-  size_t idx=0;
+  ip_addr_t ip_dest;
+  uint16_t port_dest;
+  uint8_t ip_arr_dest[4] = {0};
+  size_t idx=0, len;
   
   while (string[idx] == ' ') {
     idx++;
   }
   
+  len = strlen(string) - idx;
+  
   if (flagCommand == TERMINAL_TCP_CONNECT) {
-    t_transmit("Connect \n", 9);
+    
+    port_dest = t_parser_ip(string, len, ip_arr_dest);
+    
+    client_pcb = tcp_new();
+    
+    if (client_pcb != NULL) {
+      
+      IP4_ADDR(&ip_dest, 
+             ip_arr_dest[0], ip_arr_dest[1], ip_arr_dest[2], ip_arr_dest[3]);
+      
+      tcp_connect(client_pcb, &ip_dest, port_dest, tcp_client_connected);
+      t_transmit("Connect \n", 9);
+    }
+    
+//    t_tcp_ip_extract();
+//    t_transmit(&string[idx], strlen(&string[idx]));
   }
   else if (flagCommand == TERMINAL_TCP_DISCONNECT) {
     t_transmit("Disconnect \n", 12);
