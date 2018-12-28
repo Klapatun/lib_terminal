@@ -108,6 +108,14 @@ void t_tcp_command(char* string, size_t flagCommand) {
 //    t_transmit(&string[idx], strlen(&string[idx]));
   }
   else if (flagCommand == TERMINAL_TCP_DISCONNECT) {
+    
+    port_dest = t_parser_ip(string, len, ip_arr_dest);
+    
+    tcp_recv(client_pcb, NULL);
+    tcp_sent(client_pcb, NULL);
+    tcp_poll(client_pcb, NULL,0);
+    tcp_close(client_pcb);
+    
     t_transmit("Disconnect \n", 12);
   }
   else if (flagCommand == TERMINAL_TCP_LISTEN) {
@@ -188,7 +196,8 @@ void t_tcp_init(struct tcp_struct* sTcp) {
 
 void t_lwip_init(void) {
   
-  t_tcp_init();
+  
+//  t_tcp_init();
 }
 
 /*****************************END OF FILE**************************************/
