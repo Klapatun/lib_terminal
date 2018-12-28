@@ -26,6 +26,7 @@ extern struct netif gnetif;
 
 //ip_addr_t t_ip_addr;
 struct tcp_pcb *client_pcb;
+struct tcp_struct tcp_client;
 
 /*____________________________________________________________________________*/
 
@@ -76,10 +77,10 @@ static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
   return err;
 }
 
-void t_tcp_command(char* string, size_t flagCommand) {
+void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
   
-  ip_addr_t ip_dest;
-  uint16_t port_dest;
+//  ip_addr_t ip_dest;
+//  uint16_t port_dest;
   uint8_t ip_arr_dest[4] = {0};
   size_t idx=0, len;
   
@@ -91,16 +92,16 @@ void t_tcp_command(char* string, size_t flagCommand) {
   
   if (flagCommand == TERMINAL_TCP_CONNECT) {
     
-    port_dest = t_parser_ip(string, len, ip_arr_dest);
+    sTcp->port = t_parser_ip(string, len, ip_arr_dest);
     
-    client_pcb = tcp_new();
+    sTcp->client_pcb = tcp_new();
     
     if (client_pcb != NULL) {
       
-      IP4_ADDR(&ip_dest, 
+      IP4_ADDR(&sTcp->ip_dest, 
              ip_arr_dest[0], ip_arr_dest[1], ip_arr_dest[2], ip_arr_dest[3]);
       
-      tcp_connect(client_pcb, &ip_dest, port_dest, tcp_client_connected);
+      tcp_connect(sTcp->client_pcb, &sTcp->ip_dest, sTcp->port, tcp_client_connected);
       t_transmit("Connect \n", 9);
     }
     
@@ -109,12 +110,12 @@ void t_tcp_command(char* string, size_t flagCommand) {
   }
   else if (flagCommand == TERMINAL_TCP_DISCONNECT) {
     
-    port_dest = t_parser_ip(string, len, ip_arr_dest);
+    sTcp->port = t_parser_ip(string, len, ip_arr_dest);
     
-    tcp_recv(client_pcb, NULL);
-    tcp_sent(client_pcb, NULL);
-    tcp_poll(client_pcb, NULL,0);
-    tcp_close(client_pcb);
+    tcp_recv(sTcp->client_pcb, NULL);
+    tcp_sent(sTcp->client_pcb, NULL);
+    tcp_poll(sTcp->client_pcb, NULL,0);
+    tcp_close(sTcp->client_pcb);
     
     t_transmit("Disconnect \n", 12);
   }
@@ -145,19 +146,19 @@ size_t t_parser_data(char* string, size_t numStr) {
        n = strcspn(string, "-");
        switch(string[n+1]) {
          case 'c': {
-           t_tcp_command(&string[n+2], TERMINAL_TCP_CONNECT);
+           t_tcp_command(&string[n+2], TERMINAL_TCP_CONNECT, &tcp_client);
            break;
          }
          case 'd': {
-           t_tcp_command(&string[n+2], TERMINAL_TCP_DISCONNECT);
+           t_tcp_command(&string[n+2], TERMINAL_TCP_DISCONNECT, &tcp_client);
            break;
          }
          case 'l': {
-           t_tcp_command(&string[n+2], TERMINAL_TCP_LISTEN);
+           t_tcp_command(&string[n+2], TERMINAL_TCP_LISTEN, &tcp_client);
            break;
          }
         default: {
-           t_tcp_command(&string[n+2], 4);
+           t_tcp_command(&string[n+2], 4, &tcp_client);
         }
        }
 //       t_tcp_command();
