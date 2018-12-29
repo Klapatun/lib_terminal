@@ -59,6 +59,7 @@ size_t t_parser_ip(char* ip_str, size_t len, uint8_t* ipextp) {
     
     //about port
     ip_str+=offset;
+    len -= offset;
     port = atoi(ip_str);
     
     return port;
@@ -79,8 +80,6 @@ static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
 
 void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
   
-//  ip_addr_t ip_dest;
-//  uint16_t port_dest;
   uint8_t ip_arr_dest[4] = {0};
   size_t idx=0, len;
   
@@ -94,19 +93,22 @@ void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
     
     sTcp->port = t_parser_ip(string, len, ip_arr_dest);
     
-    sTcp->client_pcb = tcp_new();
-    
-    if (client_pcb != NULL) {
+    if (sTcp->port != 0) {
       
-      IP4_ADDR(&sTcp->ip_dest, 
-             ip_arr_dest[0], ip_arr_dest[1], ip_arr_dest[2], ip_arr_dest[3]);
+      client_pcb = tcp_new();
       
-      tcp_connect(sTcp->client_pcb, &sTcp->ip_dest, sTcp->port, tcp_client_connected);
-      t_transmit("Connect \n", 9);
+      if (client_pcb != NULL) {
+        
+        IP4_ADDR(&sTcp->ip_dest, 
+               ip_arr_dest[0], ip_arr_dest[1], ip_arr_dest[2], ip_arr_dest[3]);
+        
+        tcp_connect(sTcp->client_pcb, &sTcp->ip_dest, sTcp->port, tcp_client_connected);
+        t_transmit("Connect \n", 9);
+      }
+      else {
+        t_transmit("Error connect \n", 15);
+      }
     }
-    
-//    t_tcp_ip_extract();
-//    t_transmit(&string[idx], strlen(&string[idx]));
   }
   else if (flagCommand == TERMINAL_TCP_DISCONNECT) {
     
@@ -198,7 +200,7 @@ void t_tcp_init(struct tcp_struct* sTcp) {
 void t_lwip_init(void) {
   
   
-//  t_tcp_init();
+  t_tcp_init(&tcp_client);
 }
 
 /*****************************END OF FILE**************************************/
