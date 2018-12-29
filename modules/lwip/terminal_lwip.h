@@ -17,6 +17,9 @@
 #define TERMINAL_TCP_DISCONNECT         1
 #define TERMINAL_TCP_LISTEN             2
 
+#define TERMINAL_TCP_STATE_BUSY         0
+#define TERMINAL_TCP_STATE_FREE         1
+
 /*____________________________________________________________________________*/
 
 

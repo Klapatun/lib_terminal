@@ -80,6 +80,7 @@ static err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err)
 
 void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
   
+  err_t err;
   uint8_t ip_arr_dest[4] = {0};
   size_t idx=0, len;
   
@@ -102,7 +103,15 @@ void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
         IP4_ADDR(&sTcp->ip_dest, 
                ip_arr_dest[0], ip_arr_dest[1], ip_arr_dest[2], ip_arr_dest[3]);
         
-        tcp_connect(sTcp->client_pcb, &sTcp->ip_dest, sTcp->port, tcp_client_connected);
+        err = tcp_connect(sTcp->client_pcb, &sTcp->ip_dest, sTcp->port, tcp_client_connected);
+        if (err == ERR_OK) {
+          
+          sTcp->status = TERMINAL_TCP_STATE_BUSY;
+          t_transmit("Connect \n", 9);
+        }
+        else {
+          
+        }
         t_transmit("Connect \n", 9);
       }
       else {
@@ -119,13 +128,15 @@ void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
     tcp_poll(sTcp->client_pcb, NULL,0);
     tcp_close(sTcp->client_pcb);
     
+    sTcp->status = TERMINAL_TCP_STATE_FREE;
+    
     t_transmit("Disconnect \n", 12);
   }
   else if (flagCommand == TERMINAL_TCP_LISTEN) {
     t_transmit("Listen \n", 8);
   }
   else {
-    
+    t_transmit("Error \n", 7);
   }
     
 }
