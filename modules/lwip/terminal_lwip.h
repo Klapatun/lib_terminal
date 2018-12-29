@@ -19,6 +19,8 @@
 
 #define TERMINAL_TCP_STATE_BUSY         0
 #define TERMINAL_TCP_STATE_FREE         1
+#define TERMINAL_TCP_STATE_ERROR        2
+#define TERMINAL_TCP_STATE_NO_CONNECT   3
 
 /*____________________________________________________________________________*/
 

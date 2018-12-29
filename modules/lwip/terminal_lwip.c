@@ -110,9 +110,9 @@ void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
           t_transmit("Connect \n", 9);
         }
         else {
-          
+          sTcp->status = TERMINAL_TCP_STATE_NO_CONNECT;
+          t_transmit("Cannot connected \n", 18);
         }
-        t_transmit("Connect \n", 9);
       }
       else {
         t_transmit("Error connect \n", 15);
@@ -123,12 +123,15 @@ void t_tcp_command(char* string, size_t flagCommand, struct tcp_struct* sTcp) {
     
     sTcp->port = t_parser_ip(string, len, ip_arr_dest);
     
-    tcp_recv(sTcp->client_pcb, NULL);
-    tcp_sent(sTcp->client_pcb, NULL);
-    tcp_poll(sTcp->client_pcb, NULL,0);
-    tcp_close(sTcp->client_pcb);
-    
-    sTcp->status = TERMINAL_TCP_STATE_FREE;
+    if (sTcp->status == TERMINAL_TCP_STATE_BUSY) {
+      
+      tcp_recv(sTcp->client_pcb, NULL);
+      tcp_sent(sTcp->client_pcb, NULL);
+      tcp_poll(sTcp->client_pcb, NULL,0);
+      tcp_close(sTcp->client_pcb);
+      
+      sTcp->status = TERMINAL_TCP_STATE_FREE;
+    }
     
     t_transmit("Disconnect \n", 12);
   }
