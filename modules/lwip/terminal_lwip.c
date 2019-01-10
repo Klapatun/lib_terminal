@@ -252,7 +252,7 @@ void t_ip_check(struct netif *gnetif) {
   }
   t_transmit(" \n", 2);
   
-  t_transmit("gateway: ", 8);
+  t_transmit("gateway: ", 9);
   for (uint8_t i=0; i < 32; i+=8) {
     tmp = gnetif->gw.addr >> i;
     
@@ -264,13 +264,11 @@ void t_ip_check(struct netif *gnetif) {
 }
 
 /*Возвращает индекс элемента конца*/
-uint8_t t_ip_parser(char* string, struct netif *gnetif) {
+u32_t t_ip_parser(char* string, struct netif *gnetif) {
   
   uint8_t pattern[4];
   
   ip4_addr_t ipaddr;
-  ip4_addr_t netmask;
-  ip4_addr_t gw;
   
   size_t n = 0, n1=0, tmp=0, ten=1;
   
@@ -279,7 +277,7 @@ uint8_t t_ip_parser(char* string, struct netif *gnetif) {
   }
   
   if (string[0] == '-') {
-    return n;
+    return 0;
   }
   
   for (int i=0; i < 3; i++) {
@@ -295,12 +293,9 @@ uint8_t t_ip_parser(char* string, struct netif *gnetif) {
         tmp += (0x0F & string[n]) * ten;
         ten*=10;
         
-      }
-      
+      }      
       pattern[i] = tmp;
-      
-      string+= n1;
-      
+      string+= n1;      
     }
     
     ten = 1;
@@ -308,9 +303,9 @@ uint8_t t_ip_parser(char* string, struct netif *gnetif) {
   }
   
   n = strcspn(string, " ");
-  n1 = n+1;
+  n1 = n;
   
-  if (n < strlen(string)) {
+  if (n <= strlen(string)) {
     
     while(n!=0){
       
@@ -318,12 +313,9 @@ uint8_t t_ip_parser(char* string, struct netif *gnetif) {
       tmp += (0x0F & string[n]) * ten;
       ten*=10;
       
-    }
-    
-    pattern[3] = tmp;
-    
-    string+= n1;
-    
+    }    
+    pattern[3] = tmp;    
+    string+= n1;    
   }
   
   
@@ -331,14 +323,16 @@ uint8_t t_ip_parser(char* string, struct netif *gnetif) {
   
   IP4_ADDR(&ipaddr, pattern[0], pattern[1], pattern[2], pattern[3]);
   
-  netif_set_addr(gnetif, &ipaddr, &netmask, &gw);
-  
-  return n;
+  return ipaddr.addr;
 }
 
 void t_ip_set(char* string, struct netif *gnetif) {
   
   size_t n = 0;
+  
+  ip4_addr_t ipaddr = gnetif->ip_addr;
+  ip4_addr_t netmask = gnetif->netmask;
+  ip4_addr_t gw = gnetif->gw;
   
   do {
     
@@ -347,15 +341,18 @@ void t_ip_set(char* string, struct netif *gnetif) {
       
       switch(string[n+1]) {
         case 'i': {
-          n += t_ip_parser(&string[n+2], gnetif);
+          string += n+2;
+          ipaddr.addr = t_ip_parser(string, gnetif);
           continue;
         }
         case 'm': {
-          n = t_ip_parser(&string[n+2], gnetif);
+          string += n+2;
+          netmask.addr = t_ip_parser(string, gnetif);
           continue;
         }
         case 'g': {
-          n = t_ip_parser(&string[n+2], gnetif);
+          string += n+2;
+          gw.addr = t_ip_parser(string, gnetif);
           continue;
         }
         default: {
@@ -368,26 +365,7 @@ void t_ip_set(char* string, struct netif *gnetif) {
     
   }while(1);
   
-//  n = strcspn(string, "-");
-//  if (n < strlen(string)) {
-//    
-//     switch(string[n+1]) {
-//      case 'i': {
-//        
-//        break;
-//      }
-//      case 'm': {
-//        
-//        break;
-//      }
-//      case 'g': {
-//        
-//        break;
-//      }
-//      default: {
-//      }
-//    }
-//  }
+  netif_set_addr(gnetif, &ipaddr, &netmask, &gw);
   
 }
 
