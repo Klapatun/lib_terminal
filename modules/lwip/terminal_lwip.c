@@ -34,6 +34,7 @@ struct tcp_struct tcp_client;
 /*............................................................................*/
 
 void t_ip_check(struct netif *gnetif);
+void t_ip_set(char* string, struct netif *gnetif);
 
 /*____________________________________________________________________________*/
 
@@ -193,8 +194,8 @@ size_t t_parser_data(char* string, size_t numStr) {
           t_ip_check(&gnetif);
           break;
         }
-        case 'i': {
-          t_transmit("Inviled command \n", 17);
+        case 's': {
+          t_ip_set(&string[n+2], &gnetif);
           break;
         }
         default: {
@@ -221,7 +222,7 @@ void t_lwip_handler(terminal_t *term) {
 }
 
 /******************************************************************************/
-/**/
+/*LWIP - IP*/
 /******************************************************************************/
 
 void t_ip_check(struct netif *gnetif) {
@@ -262,9 +263,138 @@ void t_ip_check(struct netif *gnetif) {
   t_transmit(" \n", 2);
 }
 
+/*Возвращает индекс элемента конца*/
+uint8_t t_ip_parser(char* string, struct netif *gnetif) {
+  
+  uint8_t pattern[4];
+  
+  ip4_addr_t ipaddr;
+  ip4_addr_t netmask;
+  ip4_addr_t gw;
+  
+  size_t n = 0, n1=0, tmp=0, ten=1;
+  
+  while(string[0] == ' ') {
+    string++;
+  }
+  
+  if (string[0] == '-') {
+    return n;
+  }
+  
+  for (int i=0; i < 3; i++) {
+    
+    n = strcspn(string, ".");
+    n1=n+1;
+  
+    if (n < strlen(string)) {
+      
+      while(n!=0){
+        
+        n--;
+        tmp += (0x0F & string[n]) * ten;
+        ten*=10;
+        
+      }
+      
+      pattern[i] = tmp;
+      
+      string+= n1;
+      
+    }
+    
+    ten = 1;
+    tmp = 0;
+  }
+  
+  n = strcspn(string, " ");
+  n1 = n+1;
+  
+  if (n < strlen(string)) {
+    
+    while(n!=0){
+      
+      n--;
+      tmp += (0x0F & string[n]) * ten;
+      ten*=10;
+      
+    }
+    
+    pattern[3] = tmp;
+    
+    string+= n1;
+    
+  }
+  
+  
+  /*Запись в настройки*/
+  
+  IP4_ADDR(&ipaddr, pattern[0], pattern[1], pattern[2], pattern[3]);
+  
+  netif_set_addr(gnetif, &ipaddr, &netmask, &gw);
+  
+  return n;
+}
+
+void t_ip_set(char* string, struct netif *gnetif) {
+  
+  size_t n = 0;
+  
+  do {
+    
+    n = strcspn(string, "-");
+    if (n < strlen(string)) {
+      
+      switch(string[n+1]) {
+        case 'i': {
+          n += t_ip_parser(&string[n+2], gnetif);
+          continue;
+        }
+        case 'm': {
+          n = t_ip_parser(&string[n+2], gnetif);
+          continue;
+        }
+        case 'g': {
+          n = t_ip_parser(&string[n+2], gnetif);
+          continue;
+        }
+        default: {
+          t_transmit("Inviled value \n", 15);
+//          break;
+        }
+      }
+    }
+    break;
+    
+  }while(1);
+  
+//  n = strcspn(string, "-");
+//  if (n < strlen(string)) {
+//    
+//     switch(string[n+1]) {
+//      case 'i': {
+//        
+//        break;
+//      }
+//      case 'm': {
+//        
+//        break;
+//      }
+//      case 'g': {
+//        
+//        break;
+//      }
+//      default: {
+//      }
+//    }
+//  }
+  
+}
+
+
 
 /******************************************************************************/
-/**/
+/*LWIP - Initialization*/
 /******************************************************************************/
 
 void t_tcp_init(struct tcp_struct* sTcp) {
