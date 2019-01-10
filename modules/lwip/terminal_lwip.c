@@ -30,6 +30,13 @@ struct tcp_struct tcp_client;
 
 /*____________________________________________________________________________*/
 
+/*Function declaration*/
+/*............................................................................*/
+
+void t_ip_check(struct netif *gnetif);
+
+/*____________________________________________________________________________*/
+
 size_t t_parser_ip(char* ip_str, size_t len, uint8_t* ipextp) {
   
   uint16_t port=0;
@@ -179,6 +186,21 @@ size_t t_parser_data(char* string, size_t numStr) {
        }
 //       t_tcp_command();
     }
+    else if (!(strcmp("ip", tmp_str))) {
+      n = strcspn(string, "-");
+      switch(string[n+1]) {
+        case 'c': {
+          t_ip_check(&gnetif);
+          break;
+        }
+        case 'i': {
+          t_transmit("Inviled command \n", 17);
+          break;
+        }
+        default: {
+        }
+      }
+    }
     else {
       t_transmit("Unknown command \n", 17);
     }
@@ -197,6 +219,49 @@ void t_lwip_handler(terminal_t *term) {
   
   
 }
+
+/******************************************************************************/
+/**/
+/******************************************************************************/
+
+void t_ip_check(struct netif *gnetif) {
+  
+  uint8_t tmp = 0;
+  char ch[3] = {0};
+  
+  
+  
+  t_transmit("ip: ", 4);
+  for (uint8_t i=0; i < 32; i+=8) {
+    tmp = gnetif->ip_addr.addr >> i;
+    
+    sprintf(ch,"%d", tmp);
+    t_transmit(ch, strlen(ch));
+    t_transmit('.',1);
+  }
+  t_transmit(" \n", 2);
+  
+  t_transmit("mask: ", 6);
+  for (uint8_t i=0; i < 32; i+=8) {
+    tmp = gnetif->netmask.addr >> i;
+    
+    sprintf(ch,"%d", tmp);
+    t_transmit(ch, strlen(ch));
+    t_transmit('.',1);
+  }
+  t_transmit(" \n", 2);
+  
+  t_transmit("gateway: ", 8);
+  for (uint8_t i=0; i < 32; i+=8) {
+    tmp = gnetif->gw.addr >> i;
+    
+    sprintf(ch,"%d", tmp);
+    t_transmit(ch, strlen(ch));
+    t_transmit('.',1);
+  }
+  t_transmit(" \n", 2);
+}
+
 
 /******************************************************************************/
 /**/
