@@ -9,8 +9,17 @@
 
 #include "terminal.h"
    
+#if TERMINAL_INCLUDE_T
 #include "t/terminal_t.h"
+#endif
+   
+#if TERMINAL_INCLUDE_HELP
 #include "help/terminal_help.h"
+#endif
+   
+#if TERMINAL_INCLUDE_LWIP
+#include "lwip/terminal_lwip.h"
+#endif
 
 /*____________________________________________________________________________*/
 
@@ -20,6 +29,7 @@
 
 static terminal_t* trm_local;
 extern struct help_struct help;
+static uint32_t timTick;
 
 /*____________________________________________________________________________*/
 
@@ -37,14 +47,21 @@ void t_init(terminal_t* out_term) {
   t_definition(out_term);
   t_definition(trm_local);
   
+#if TERMINAL_INCLUDE_T
   t_build_help(&help);
-  
+#endif
+#if TERMINAL_INCLUDE_LWIP
+  t_lwip_init();
+#endif
 }
 
 
 uint8_t t_check(terminal_t *term) {
   
-  if (term->state == TERMINAL_STATE_BUSY) {
+  uint32_t tmpTim = HAL_GetTick();
+  
+  if ((term->state == TERMINAL_STATE_BUSY) || 
+      ((timTick+1000 <= tmpTim) && (term->state == TERMINAL_STATE_WAIT))) {
     
     t_interrupt_off();    
     trm_local->len_command = term->len_command;
@@ -53,18 +70,30 @@ uint8_t t_check(terminal_t *term) {
     memcpy(trm_local->command, term->command, sizeof(term->command)); 
     t_interrupt_on();
         
-    if (!(strcmp("t", trm_local->command))) {
-      t_data_handler(term);
+    
+    if (!(strcmp("echo", trm_local->command))) {
+      t_transmit(trm_local->data, trm_local->len_data);
     }
+#if TERMINAL_INCLUDE_HELP
     else if (!(strcmp("help", trm_local->command))) {
       t_help_handler(term);
     }
-    else if (!(strcmp("echo", trm_local->command))) {
-      t_transmit(trm_local->data, trm_local->len_data);
+#endif
+#if TERMINAL_INCLUDE_T
+    else if (!(strcmp("t", trm_local->command))) {
+      t_data_handler(term);
     }
+#endif
+#if TERMINAL_INCLUDE_LWIP
+    else if (!(strcmp("lwip", trm_local->command))) {
+      t_lwip_handler(term);
+    }
+#endif
     else {
       t_transmit("Error: bad command: ", 20);
     }
+    
+    timTick = 0;
     
     trm_local->state = TERMINAL_STATE_FREE;
   }
@@ -77,15 +106,37 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
   
   static uint8_t idx=0, separator=0;
   
+  if (timTick == 0) {
+    timTick = HAL_GetTick();
+  }
+  
   if (strchr(Buf, ':')) {
     /*Command*/
+    term->state = TERMINAL_STATE_WAIT;
     strncpy(term->command, term->msg, idx);
     term->command[idx] = '\0';
     term->len_command = idx;
-    separator = idx+1;
+    separator = idx;
   }
   else if (strchr(Buf, ';')) {
     /*Data*/
+    
+    if (separator == 0) {
+      strncpy(term->command, term->msg, idx);
+      term->command[idx] = '\0';
+      term->len_command = idx;
+      term->state = TERMINAL_STATE_BUSY;
+      return;
+    }
+    
+    while (term->msg[separator] == ' ') {
+      separator++;
+    }
+    
+    if (separator == idx-1) {
+      separator++;
+    }
+    
     strncpy(term->data, &term->msg[separator], idx-separator);
     term->data[idx-separator] = '\0';
     term->len_data = idx-separator;
@@ -95,6 +146,7 @@ void t_recive(terminal_t *term, char* Buf, uint16_t Len) {
     term->state = TERMINAL_STATE_BUSY;
   }
   else {
+    term->state = TERMINAL_STATE_WAIT;
     strncpy(&term->msg[idx], (char*)Buf, Len);
     idx += Len;
     if (idx >= TERMINAL_SIZE_MESSAGE) {
